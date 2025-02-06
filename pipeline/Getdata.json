@@ -3,46 +3,88 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Getdatasource",
-				"type": "Copy",
+				"name": "takeeachcity",
+				"type": "ForEach",
 				"dependsOn": [],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
 				"userProperties": [],
 				"typeProperties": {
-					"source": {
-						"type": "JsonSource",
-						"additionalColumns": [
-							{
-								"value": "$$FILEPATH"
-							}
-						],
-						"storeSettings": {
-							"type": "HttpReadSettings",
-							"requestMethod": "GET"
-						},
-						"formatSettings": {
-							"type": "JsonReadSettings"
-						}
+					"items": {
+						"value": "@pipeline().parameters.locations",
+						"type": "Expression"
 					},
-					"enableStaging": false
-				},
-				"inputs": [
-					{
-						"referenceName": "currentweather",
-						"type": "DatasetReference",
-						"parameters": {
-							"apikeyweather": "?key=86602e467fd242c2af990256252201&q=Paris"
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Getdatasource_copy1",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "JsonSource",
+									"storeSettings": {
+										"type": "HttpReadSettings",
+										"requestMethod": "GET"
+									},
+									"formatSettings": {
+										"type": "JsonReadSettings"
+									}
+								},
+								"sink": {
+									"type": "JsonSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "JsonWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "currentweather",
+									"type": "DatasetReference",
+									"parameters": {
+										"apikeyweather": {
+											"value": "current.json?key=@{pipeline().parameters.api_key}&q=@{item()}",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "rawdata",
+									"type": "DatasetReference"
+								}
+							]
 						}
-					}
-				]
+					]
+				}
 			}
 		],
+		"parameters": {
+			"api_key": {
+				"type": "string",
+				"defaultValue": "86602e467fd242c2af990256252201"
+			},
+			"locations": {
+				"type": "array",
+				"defaultValue": [
+					"Paris",
+					"London",
+					"Athens"
+				]
+			}
+		},
 		"annotations": []
 	}
 }
