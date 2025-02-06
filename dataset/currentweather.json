@@ -1,0 +1,26 @@
+{
+	"name": "currentweather",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "httpweatherapi",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"apikeyweather": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": {
+					"value": "@dataset().apikeyweather",
+					"type": "Expression"
+				}
+			}
+		},
+		"schema": {}
+	}
+}
