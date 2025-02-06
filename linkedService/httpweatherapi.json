@@ -1,0 +1,22 @@
+{
+	"name": "httpweatherapi",
+	"properties": {
+		"parameters": {
+			"waetherapikey": {
+				"type": "string",
+				"defaultValue": "86602e467fd242c2af990256252201"
+			},
+			"location": {
+				"type": "string",
+				"defaultValue": "Paris"
+			}
+		},
+		"annotations": [],
+		"type": "HttpServer",
+		"typeProperties": {
+			"url": "http://api.weatherapi.com/v1",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Anonymous"
+		}
+	}
+}
