@@ -1,0 +1,42 @@
+{
+	"name": "Json1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "storagedatalake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "parameters"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"base_url": {
+					"type": "string"
+				},
+				"parameters": {
+					"type": "object",
+					"properties": {
+						"key": {
+							"type": "string"
+						},
+						"q": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"days": {
+							"type": "integer"
+						}
+					}
+				}
+			}
+		}
+	}
+}

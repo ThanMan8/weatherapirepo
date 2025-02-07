@@ -1,0 +1,61 @@
+{
+	"name": "flattendata",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_git_parameters",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Json1",
+						"type": "DatasetReference"
+					},
+					"name": "outputflattendata"
+				}
+			],
+			"transformations": [
+				{
+					"name": "flattenparameters"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          base_url as string,",
+				"          parameters as (key as string, q as string[], days as integer)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'arrayOfDocuments') ~> source1",
+				"source1 foldDown(unroll(parameters.q),",
+				"     mapColumn(",
+				"          base_url,",
+				"          city_paris = parameters.q,",
+				"          city_london = parameters.q,",
+				"          city_athens = parameters.q",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> flattenparameters",
+				"flattenparameters sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          base_url as string,",
+				"          parameters as (key as string, q as string[], days as integer)",
+				"     ),",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> outputflattendata"
+			]
+		}
+	}
+}
