@@ -1,22 +1,17 @@
 {
-	"name": "rawdata",
+	"name": "takeflattendata",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "storagedatalake",
 			"type": "LinkedServiceReference"
-		},
-		"parameters": {
-			"city_name": {
-				"type": "String"
-			}
 		},
 		"annotations": [],
 		"type": "Json",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "current_weather",
-				"fileSystem": "bronze"
+				"fileName": "part-00000-95a23b5b-0a0c-453a-8ae7-84a54f3fd91e-c000.json",
+				"fileSystem": "parameters"
 			}
 		},
 		"schema": {}

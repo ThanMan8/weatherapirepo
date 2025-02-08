@@ -1,0 +1,56 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "readsource",
+						"type": "DatasetReference"
+					},
+					"name": "sourcedata"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "output",
+						"type": "DatasetReference"
+					},
+					"name": "sinkdata"
+				}
+			],
+			"transformations": [
+				{
+					"name": "flattendata"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          base_url as string,",
+				"          parameters as (key as string, q as string[])",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'arrayOfDocuments') ~> sourcedata",
+				"sourcedata foldDown(unroll(parameters.q),",
+				"     mapColumn(",
+				"          base_url,",
+				"          key = parameters.key,",
+				"          city_names = parameters.q",
+				"     ),",
+				"     partitionBy('hash', 1),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> flattendata",
+				"flattendata sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     partitionBy('hash', 1)) ~> sinkdata"
+			]
+		}
+	}
+}

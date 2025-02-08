@@ -5,11 +5,18 @@
 			{
 				"name": "takeeachcity",
 				"type": "ForEach",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "takerows",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@pipeline().parameters.locations",
+						"value": "@activity('takerows').output.value",
 						"type": "Expression"
 					},
 					"isSequential": true,
@@ -54,7 +61,7 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"apikeyweather": {
-											"value": "current.json?key=@{pipeline().parameters.api_key}&q=@{item()}",
+											"value": "@concat(item().base_url,'?key=',item().key,'&q=', item().city_names)\n\n\n\n\n",
 											"type": "Expression"
 										}
 									}
@@ -63,28 +70,120 @@
 							"outputs": [
 								{
 									"referenceName": "rawdata",
-									"type": "DatasetReference"
+									"type": "DatasetReference",
+									"parameters": {
+										"city_name": {
+											"value": "@item().city_names",
+											"type": "Expression"
+										}
+									}
 								}
 							]
 						}
 					]
 				}
+			},
+			{
+				"name": "readthesource",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "readsource",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "flattenparameters",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "readthesource",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "dataflow1",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "takerows",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "flattenparameters",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "takeflattendata",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
 			}
 		],
-		"parameters": {
-			"api_key": {
-				"type": "string",
-				"defaultValue": "86602e467fd242c2af990256252201"
-			},
-			"locations": {
-				"type": "array",
-				"defaultValue": [
-					"Paris",
-					"London",
-					"Athens"
-				]
-			}
-		},
 		"annotations": []
 	}
 }

@@ -1,22 +1,17 @@
 {
-	"name": "rawdata",
+	"name": "output",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "storagedatalake",
 			"type": "LinkedServiceReference"
-		},
-		"parameters": {
-			"city_name": {
-				"type": "String"
-			}
 		},
 		"annotations": [],
 		"type": "Json",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "current_weather",
-				"fileSystem": "bronze"
+				"fileName": "output.json",
+				"fileSystem": "parameters"
 			}
 		},
 		"schema": {}
