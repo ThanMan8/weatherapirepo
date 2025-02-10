@@ -182,6 +182,33 @@
 					},
 					"firstRowOnly": false
 				}
+			},
+			{
+				"name": "transforming_silver_layer",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "takeeachcity",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/manoloudas88@gmail.com/weather-api-end-end-engineer"
+				},
+				"linkedServiceName": {
+					"referenceName": "Db_weather_df",
+					"type": "LinkedServiceReference"
+				}
 			}
 		],
 		"annotations": []
