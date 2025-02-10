@@ -1,0 +1,13 @@
+{
+	"name": "Db_weather_df",
+	"properties": {
+		"annotations": [],
+		"type": "AzureDatabricks",
+		"typeProperties": {
+			"domain": "https://adb-3183253932546573.13.azuredatabricks.net",
+			"authentication": "MSI",
+			"workspaceResourceId": "/subscriptions/d3bf66f1-90e7-4414-9094-5ca7fda806db/resourceGroups/apiweatherdatabricks/providers/Microsoft.Databricks/workspaces/dbweather-streaming",
+			"existingClusterId": "0122-103914-wehl9sr7"
+		}
+	}
+}
